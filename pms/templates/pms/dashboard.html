@@ -1175,25 +1175,25 @@
                     <div class="pm-kpi-card__icon pm-kpi-card__icon--indigo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
                     <div class="pm-kpi-card__label">{% trans "Objectives"|escapejs %}</div>
                     <div class="pm-kpi-card__value">${data.total_objectives}</div>
-                    <div class="pm-kpi-card__sub"><span class="pm-badge pm-badge--green">${data.completion_rate}% {% trans "completed"|escapejs %}</span></div>
+                    <div class="pm-kpi-card__sub"><span class="pm-badge pm-badge--green">${data.completion_rate}% {% trans "Completed"|escapejs %}</span></div>
                 </a>
                 <a href="{% url 'view-key-result' %}" class="pm-kpi-card">
                     <div class="pm-kpi-card__icon pm-kpi-card__icon--green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
                     <div class="pm-kpi-card__label">{% trans "Avg Progress"|escapejs %}</div>
                     <div class="pm-kpi-card__value">${data.avg_progress}%</div>
-                    <div class="pm-kpi-card__sub"><span class="pm-badge pm-badge--blue">${data.total_key_results} {% trans "key results"|escapejs %}</span></div>
+                    <div class="pm-kpi-card__sub"><span class="pm-badge pm-badge--blue">${data.total_key_results} {% trans "Key Results"|escapejs %}</span></div>
                 </a>
                 <a href="{% url 'objective-list-view' %}?status=At+Risk&open_tab=1" class="pm-kpi-card">
                     <div class="pm-kpi-card__icon pm-kpi-card__icon--red"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
                     <div class="pm-kpi-card__label">{% trans "At Risk"|escapejs %}</div>
                     <div class="pm-kpi-card__value">${data.at_risk}</div>
-                    <div class="pm-kpi-card__sub"><span class="pm-badge pm-badge--red">{% trans "Objectives need attention"|escapejs %}</span></div>
+                    <div class="pm-kpi-card__sub"><span class="pm-badge pm-badge--red">{% trans "Objectives Need Attention"|escapejs %}</span></div>
                 </a>
                 <a href="{% url 'feedback-view' %}" class="pm-kpi-card">
                     <div class="pm-kpi-card__icon pm-kpi-card__icon--amber"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
                     <div class="pm-kpi-card__label">{% trans "Feedback"|escapejs %}</div>
                     <div class="pm-kpi-card__value">${data.total_feedbacks}</div>
-                    <div class="pm-kpi-card__sub">${data.pending_feedback > 0 ? '<span class="pm-badge pm-badge--amber">' + data.pending_feedback + ' {% trans "pending"|escapejs %}</span>' : '<span class="pm-badge pm-badge--green">{% trans "All reviewed"|escapejs %}</span>'}</div>
+                    <div class="pm-kpi-card__sub">${data.pending_feedback > 0 ? '<span class="pm-badge pm-badge--amber">' + data.pending_feedback + ' {% trans "Pending"|escapejs %}</span>' : '<span class="pm-badge pm-badge--green">{% trans "All Reviewed"|escapejs %}</span>'}</div>
                 </a>`;
                 });
             }

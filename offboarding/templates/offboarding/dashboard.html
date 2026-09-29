@@ -436,25 +436,25 @@
                     <div class="ob-kpi-card__icon ob-kpi-card__icon--red"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
                     <div class="ob-kpi-card__label">{% trans "Active Offboarding"|escapejs %}</div>
                     <div class="ob-kpi-card__value">${data.active_offboarding}</div>
-                    <div class="ob-kpi-card__sub"><span class="ob-badge ob-badge--red">${data.exit_ratio}% {% trans "exit rate"|escapejs %}</span></div>
+                    <div class="ob-kpi-card__sub"><span class="ob-badge ob-badge--red">${data.exit_ratio}% {% trans "Exit Rate"|escapejs %}</span></div>
                 </a>
                 <a href="{% url 'resignation-request-view' %}?status=requested" class="ob-kpi-card">
                     <div class="ob-kpi-card__icon ob-kpi-card__icon--amber"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
                     <div class="ob-kpi-card__label">{% trans "Resignations"|escapejs %}</div>
                     <div class="ob-kpi-card__value">${data.pending_resignations}</div>
-                    <div class="ob-kpi-card__sub">${data.approved_resignations > 0 ? '<span class="ob-badge ob-badge--green">' + data.approved_resignations + ' {% trans "approved"|escapejs %}</span>' : '<span class="ob-badge ob-badge--amber">{% trans "Pending review"|escapejs %}</span>'}</div>
+                    <div class="ob-kpi-card__sub">${data.approved_resignations > 0 ? '<span class="ob-badge ob-badge--green">' + data.approved_resignations + ' {% trans "Approved"|escapejs %}</span>' : '<span class="ob-badge ob-badge--amber">{% trans "Pending Review"|escapejs %}</span>'}</div>
                 </a>
                 <div class="ob-kpi-card ob-kpi-card--static" title="${'Task Completion = Completed Tasks (' + data.completed_tasks + ') / Total Tasks (' + data.total_tasks + ') × 100 = ' + data.task_completion + '%'}">
                     <div class="ob-kpi-card__icon ob-kpi-card__icon--green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
                     <div class="ob-kpi-card__label">{% trans "Task Completion"|escapejs %}</div>
                     <div class="ob-kpi-card__value">${data.task_completion}%</div>
-                    <div class="ob-kpi-card__sub"><span class="ob-badge ob-badge--blue">${data.completed_tasks}/${data.total_tasks} {% trans "tasks done"|escapejs %}</span></div>
+                    <div class="ob-kpi-card__sub"><span class="ob-badge ob-badge--blue">${data.completed_tasks}/${data.total_tasks} {% trans "Tasks Done"|escapejs %}</span></div>
                 </div>
                 <a href="{% url 'offboarding-pipeline' %}?stage_type=archived" class="ob-kpi-card">
                     <div class="ob-kpi-card__icon ob-kpi-card__icon--blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
                     <div class="ob-kpi-card__label">{% trans "Archived"|escapejs %}</div>
                     <div class="ob-kpi-card__value">${data.archived}</div>
-                    <div class="ob-kpi-card__sub">${data.notice_ending_soon > 0 ? '<span class="ob-badge ob-badge--amber">' + data.notice_ending_soon + ' {% trans "notice ending"|escapejs %}</span>' : '<span class="ob-badge ob-badge--green" id="ob-avg-duration">{% trans "Completed offboarding"|escapejs %}</span>'}</div>
+                    <div class="ob-kpi-card__sub">${data.notice_ending_soon > 0 ? '<span class="ob-badge ob-badge--amber">' + data.notice_ending_soon + ' {% trans "Notice Ending"|escapejs %}</span>' : '<span class="ob-badge ob-badge--green" id="ob-avg-duration">{% trans "Completed Offboarding"|escapejs %}</span>'}</div>
                 </a>`;
         });
     }
@@ -685,7 +685,7 @@
                         <div class="ob-list-item__name">${a.employee}</div>
                         <div class="ob-list-item__detail">${a.asset} · ${a.category}</div>
                     </div>
-                    <span class="ob-badge ob-badge--red">{% trans "Not returned"|escapejs %}</span>
+                    <span class="ob-badge ob-badge--red">{% trans "Not Returned"|escapejs %}</span>
                 </a>`;
             }).join('');
         }).catch(() => { document.getElementById('ob-assets').innerHTML = '<div class="ob-info-panel__empty">{% trans "No data"|escapejs %}</div>'; });

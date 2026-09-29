@@ -334,25 +334,25 @@
                     <div class="pr-kpi-card__icon pr-kpi-card__icon--blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
                     <div class="pr-kpi-card__label">{% trans "Total Projects"|escapejs %}</div>
                     <div class="pr-kpi-card__value">${d.total_projects}</div>
-                    <div class="pr-kpi-card__sub"><span class="pr-badge pr-badge--blue">+${d.total_new_this_month} {% trans "this month"|escapejs %}</span></div>
+                    <div class="pr-kpi-card__sub"><span class="pr-badge pr-badge--blue">+${d.total_new_this_month} {% trans "This Month"|escapejs %}</span></div>
                 </a>
                 <a href="${pv}?status=in_progress" class="pr-kpi-card">
                     <div class="pr-kpi-card__icon pr-kpi-card__icon--green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></div>
                     <div class="pr-kpi-card__label">{% trans "Active"|escapejs %}</div>
                     <div class="pr-kpi-card__value">${d.active_projects}</div>
-                    <div class="pr-kpi-card__sub"><span class="pr-badge pr-badge--green">+${d.active_started_this_month} {% trans "started this month"|escapejs %}</span></div>
+                    <div class="pr-kpi-card__sub"><span class="pr-badge pr-badge--green">+${d.active_started_this_month} {% trans "Started This Month"|escapejs %}</span></div>
                 </a>
                 <a href="${pv}?status=completed" class="pr-kpi-card">
                     <div class="pr-kpi-card__icon pr-kpi-card__icon--purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
                     <div class="pr-kpi-card__label">{% trans "Completed"|escapejs %}</div>
                     <div class="pr-kpi-card__value">${d.completed_projects}</div>
-                    <div class="pr-kpi-card__sub"><span class="pr-badge ${changeClass}">${changeIcon} ${fmtPct(Math.abs(d.completed_change_pct))} {% trans "vs last month"|escapejs %}</span></div>
+                    <div class="pr-kpi-card__sub"><span class="pr-badge ${changeClass}">${changeIcon} ${fmtPct(Math.abs(d.completed_change_pct))} {% trans "Vs Last Month"|escapejs %}</span></div>
                 </a>
                 <a href="${pv}?overdue=True" class="pr-kpi-card">
                     <div class="pr-kpi-card__icon pr-kpi-card__icon--red"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
                     <div class="pr-kpi-card__label">{% trans "Overdue"|escapejs %}</div>
                     <div class="pr-kpi-card__value">${d.overdue_projects}</div>
-                    <div class="pr-kpi-card__sub">${d.overdue_new_this_month > 0 ? `<span class="pr-badge pr-badge--red">+${d.overdue_new_this_month} {% trans "this month"|escapejs %}</span>` : `<span class="pr-badge pr-badge--red">{% trans "Past end date"|escapejs %}</span>`}</div>
+                    <div class="pr-kpi-card__sub">${d.overdue_new_this_month > 0 ? `<span class="pr-badge pr-badge--red">+${d.overdue_new_this_month} {% trans "This Month"|escapejs %}</span>` : `<span class="pr-badge pr-badge--red">{% trans "Past End Date"|escapejs %}</span>`}</div>
                 </a>`;
             document.getElementById('pr-last-updated').textContent =
                 `{% trans "Last updated"|escapejs %}: ${new Date().toLocaleTimeString()}`;

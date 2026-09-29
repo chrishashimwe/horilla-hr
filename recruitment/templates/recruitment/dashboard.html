@@ -1315,19 +1315,19 @@
                     <div class="rd-kpi-card__icon rd-kpi-card__icon--amber"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
                     <div class="rd-kpi-card__label">{% trans "Total Vacancies"|escapejs %}</div>
                     <div class="rd-kpi-card__value">${data.total_vacancy}</div>
-                    <div class="rd-kpi-card__sub"><span class="rd-badge rd-badge--blue">{% trans "Open positions"|escapejs %}</span></div>
+                    <div class="rd-kpi-card__sub"><span class="rd-badge rd-badge--blue">{% trans "Open Positions"|escapejs %}</span></div>
                 </a>
                 <a href="{% url 'recruitment-view' %}" class="rd-kpi-card">
                     <div class="rd-kpi-card__icon rd-kpi-card__icon--red"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
                     <div class="rd-kpi-card__label">{% trans "Ongoing"|escapejs %}</div>
                     <div class="rd-kpi-card__value">${data.ongoing_recruitments}</div>
-                    <div class="rd-kpi-card__sub"><span class="rd-badge rd-badge--amber">{% trans "Active recruitments"|escapejs %}</span></div>
+                    <div class="rd-kpi-card__sub"><span class="rd-badge rd-badge--amber">{% trans "Active Recruitments"|escapejs %}</span></div>
                 </a>
                 <a href="{% url 'candidate-view' %}?hired=true&created_at_from=${data.period_from_date}&created_at_till=${data.period_to_date}&filter_applied=1" class="rd-kpi-card">
                     <div class="rd-kpi-card__icon rd-kpi-card__icon--green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg></div>
-                    <div class="rd-kpi-card__label">{% trans "Hired"|escapejs %}</div>
+                    <div class="rd-kpi-card__label">{% trans "Shortlisted"|escapejs %}</div>
                     <div class="rd-kpi-card__value">${data.total_hired}</div>
-                    <div class="rd-kpi-card__sub"><span class="rd-badge rd-badge--green">{% trans "of"|escapejs %} ${data.total_candidates} {% trans "candidates"|escapejs %}</span></div>
+                    <div class="rd-kpi-card__sub"><span class="rd-badge rd-badge--green">{% trans "Of"|escapejs %} ${data.total_candidates} {% trans "Candidates"|escapejs %}</span></div>
                 </a>
                 <div class="rd-kpi-card rd-kpi-card--static" title="{% trans "Conversion Rate"|escapejs %} = {% trans "Hired"|escapejs %} (${data.total_hired}) / {% trans "Total Candidates"|escapejs %} (${data.total_candidates}) × 100 = ${data.conversion_rate}%">
                     <div class="rd-kpi-card__icon rd-kpi-card__icon--blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
@@ -1339,7 +1339,7 @@
                     <div class="rd-kpi-card__icon rd-kpi-card__icon--purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 18 2 2 4-4"/></svg></div>
                     <div class="rd-kpi-card__label">{% trans "Acceptance Rate"|escapejs %}</div>
                     <div class="rd-kpi-card__value">${data.acceptance_rate}%</div>
-                    <div class="rd-kpi-card__sub"><span class="rd-badge rd-badge--green">{% trans "Offer accepted"|escapejs %}</span></div>
+                    <div class="rd-kpi-card__sub"><span class="rd-badge rd-badge--green">{% trans "Offer Accepted"|escapejs %}</span></div>
                 </div>`;
                 });
             }

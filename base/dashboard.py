@@ -532,6 +532,7 @@ def dashboard_kpi_data(request):
     on_leave = len(on_leave_employee_ids)
 
     present_today = 0
+    present_employee_ids = set()
     present_by_work_type = []
     try:
         from attendance.models import Attendance
@@ -539,7 +540,10 @@ def dashboard_kpi_data(request):
         present_qs = Attendance.objects.filter(
             attendance_date=real_today, employee_id__in=emp_qs
         )
-        present_today = present_qs.values("employee_id").distinct().count()
+        present_employee_ids = set(
+            present_qs.values_list("employee_id", flat=True).distinct()
+        )
+        present_today = len(present_employee_ids)
         present_by_work_type = list(
             present_qs.values("work_type_id__work_type")
             .annotate(count=Count("employee_id", distinct=True))
@@ -558,14 +562,19 @@ def dashboard_kpi_data(request):
     # Expected = active employees not on approved leave (excludes leave from
     # the denominator so "absent" is not inflated by people who should be out).
     expected_today = max(0, total_employees - on_leave)
-    # "Offline" is deliberately the exact remainder of the other two top-row
-    # cards, not the Attendance dashboard's shift-aware "missing punches"
-    # definition (which excludes employees with no shift assigned or whose
-    # shift hasn't started yet) -- Present Today + Offline + On Leave must
-    # always add up to Total Employees for these three cards to read
-    # correctly together. The Attendance dashboard's own Offline card is a
-    # different, more granular metric and isn't held to this identity.
-    not_checked_in = max(0, total_employees - present_today - on_leave)
+    # "Absent" mirrors the employee-view "Expected to Check In" filter this
+    # card links to: active employees with no attendance record today who
+    # also aren't on approved leave today. Computed as an actual set
+    # difference (not total - present - on_leave) because present and
+    # on_leave can overlap -- e.g. a half-day leave where the employee still
+    # checked in -- and a plain subtraction would double-subtract those
+    # employees, undercounting Absent versus the redirect page.
+    not_checked_in = (
+        emp_qs.exclude(id__in=present_employee_ids)
+        .exclude(id__in=on_leave_employee_ids)
+        .distinct()
+        .count()
+    )
     expected_to_check_in = not_checked_in
     # Keep absent_today as an alias for not_checked_in for API compatibility.
     absent_today = not_checked_in

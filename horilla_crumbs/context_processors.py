@@ -759,6 +759,8 @@ def _section_redirect(url_name):
 
 
 def _leave_redirect(request):
+    if request.user.has_perm("leave.view_leaverequest"):
+        return redirect("leave-dashboard")
     return redirect(reverse("leave-employee-dashboard") + "?dashboard=true")
 
 

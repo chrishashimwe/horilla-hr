@@ -33,14 +33,14 @@ def _parse_period(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_dashboard_view(request):
     """Render the modern leave dashboard page."""
     return render(request, "leave/dashboard.html")
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_kpi_data(request):
     """Return leave KPI summary data as JSON."""
     from leave.models import AvailableLeave, LeaveAllocationRequest, LeaveRequest
@@ -49,18 +49,22 @@ def leave_kpi_data(request):
     first_of_month = from_date
     real_today = date.today()  # always current date for point-in-time metrics
 
-    pending_approval = LeaveRequest.objects.filter(status="requested").count()
+    pending_approval = LeaveRequest.objects.filter(
+        status="requested", employee_id__is_active=True
+    ).count()
 
     approved_this_month = LeaveRequest.objects.filter(
         status="approved",
         start_date__gte=first_of_month,
         start_date__lte=to_date,
+        employee_id__is_active=True,
     ).count()
 
     rejected_this_month = LeaveRequest.objects.filter(
         status="rejected",
         start_date__gte=first_of_month,
         start_date__lte=to_date,
+        employee_id__is_active=True,
     ).count()
 
     # Always reflects who is on leave right now, independent of the date filter
@@ -68,6 +72,7 @@ def leave_kpi_data(request):
         LeaveRequest.objects.filter(
             start_date__lte=real_today,
             status="approved",
+            employee_id__is_active=True,
         )
         .filter(
             Q(end_date__gte=real_today)
@@ -83,6 +88,7 @@ def leave_kpi_data(request):
         status="approved",
         start_date__gte=first_of_month,
         start_date__lte=to_date,
+        employee_id__is_active=True,
     ).aggregate(total=Coalesce(Sum("requested_days"), 0.0, output_field=FloatField()))[
         "total"
     ]
@@ -91,7 +97,7 @@ def leave_kpi_data(request):
     pending_allocations = 0
     try:
         pending_allocations = LeaveAllocationRequest.objects.filter(
-            status="requested"
+            status="requested", employee_id__is_active=True
         ).count()
     except Exception:
         pass
@@ -102,7 +108,7 @@ def leave_kpi_data(request):
         from leave.models import CompensatoryLeaveRequest
 
         pending_comp = CompensatoryLeaveRequest.objects.filter(
-            status="requested"
+            status="requested", employee_id__is_active=True
         ).count()
     except Exception:
         pass
@@ -124,7 +130,7 @@ def leave_kpi_data(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_monthly_trend(request):
     """Monthly leave request counts for the last 6 months."""
     from leave.models import LeaveRequest
@@ -152,18 +158,21 @@ def leave_monthly_trend(request):
             status="approved",
             start_date__gte=month_start,
             start_date__lte=month_end,
+            employee_id__is_active=True,
         ).count()
 
         rejected = LeaveRequest.objects.filter(
             status="rejected",
             start_date__gte=month_start,
             start_date__lte=month_end,
+            employee_id__is_active=True,
         ).count()
 
         pending = LeaveRequest.objects.filter(
             status="requested",
             start_date__gte=month_start,
             start_date__lte=month_end,
+            employee_id__is_active=True,
         ).count()
 
         months.append(
@@ -181,7 +190,7 @@ def leave_monthly_trend(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_type_distribution(request):
     """Leave days by type for the current month."""
     from leave.models import LeaveRequest
@@ -197,6 +206,7 @@ def leave_type_distribution(request):
                 status="approved",
                 start_date__gte=first_of_month,
                 start_date__lte=today,
+                employee_id__is_active=True,
             )
             .values(
                 "leave_type_id",
@@ -224,7 +234,7 @@ def leave_type_distribution(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_department_breakdown(request):
     """Leave days by department for the current month."""
     from leave.models import LeaveRequest
@@ -240,6 +250,7 @@ def leave_department_breakdown(request):
                 status="approved",
                 start_date__gte=first_of_month,
                 start_date__lte=today,
+                employee_id__is_active=True,
             )
             .values("employee_id__employee_work_info__department_id__department")
             .annotate(count=Count("id"), total_days=Sum("requested_days"))
@@ -263,7 +274,7 @@ def leave_department_breakdown(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_utilization_rate(request):
     """Leave utilization per leave type: days used in the selected period vs total allocated."""
     from leave.models import AvailableLeave, LeaveRequest
@@ -290,6 +301,7 @@ def leave_utilization_rate(request):
                     status="approved",
                     start_date__lte=to_date,
                     end_date__gte=from_date,
+                    employee_id__is_active=True,
                 )
                 .values("leave_type_id")
                 .annotate(total=Sum("requested_days"))
@@ -321,7 +333,7 @@ def leave_utilization_rate(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_paid_unpaid_split(request):
     """Paid vs unpaid leave days for the current month."""
     from leave.models import LeaveRequest
@@ -339,6 +351,7 @@ def leave_paid_unpaid_split(request):
                 status="approved",
                 start_date__gte=first_of_month,
                 start_date__lte=today,
+                employee_id__is_active=True,
             )
             .values("leave_type_id__payment")
             .annotate(total_days=Sum("requested_days"))
@@ -363,7 +376,7 @@ def leave_paid_unpaid_split(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_top_takers(request):
     """Top 10 employees by leave days taken this month."""
     from employee.models import Employee
@@ -380,6 +393,7 @@ def leave_top_takers(request):
                 status="approved",
                 start_date__gte=first_of_month,
                 start_date__lte=today,
+                employee_id__is_active=True,
             )
             .values(
                 "employee_id",
@@ -423,7 +437,7 @@ def leave_top_takers(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_on_leave_today(request):
     """Employees with approved leave on actual today."""
     from leave.models import LeaveRequest
@@ -438,6 +452,7 @@ def leave_on_leave_today(request):
                 start_date__lte=today,
                 end_date__gte=today,
                 status="approved",
+                employee_id__is_active=True,
             )
             .select_related("employee_id", "leave_type_id")
             .order_by("employee_id__employee_first_name")[:20]
@@ -467,7 +482,7 @@ def leave_on_leave_today(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_upcoming_holidays(request):
     """Holidays falling within the selected period."""
     from base.models import Holidays
@@ -503,7 +518,7 @@ def leave_upcoming_holidays(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_weekly_pattern(request):
     """Leave requests by day of week for the selected period (pattern analysis)."""
     from leave.models import LeaveRequest
@@ -525,6 +540,7 @@ def leave_weekly_pattern(request):
             status="approved",
             start_date__lte=to_date,
             end_date__gte=from_date,
+            employee_id__is_active=True,
         )
 
         for lr in leaves:
@@ -545,7 +561,7 @@ def leave_weekly_pattern(request):
 
 
 @login_required
-@permission_required("leave.delete_leaverequest")
+@permission_required("leave.view_leaverequest")
 def leave_upcoming(request):
     """Approved leaves starting within next 7 days from today."""
     from datetime import timedelta
@@ -563,6 +579,7 @@ def leave_upcoming(request):
                 status="approved",
                 start_date__gte=today,
                 start_date__lte=next_week,
+                employee_id__is_active=True,
             )
             .select_related("employee_id", "leave_type_id")
             .order_by("start_date")[:15]

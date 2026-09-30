@@ -568,7 +568,7 @@
                 <div class="ed-header__date" id="ed-date"></div>
             </div>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap">
-                {% if request.user.is_superuser or perms.leave.delete_leaverequest %}
+                {% if perms.leave.view_leaverequest %}
                     <a href="{% url 'leave-dashboard' %}" class="ed-btn-admin">
                         <svg
                             width="14"

@@ -115,6 +115,18 @@ def _missing_punches_employees(today=None, employee_ids=None):
     return Employee.objects.filter(id__in=missing_ids)
 
 
+def _scoped_employees(request):
+    """Active employees, restricted to a reporting manager's subordinates
+    when they lack attendance.view_attendance; unrestricted otherwise."""
+    from base.methods import filtersubordinatesemployeemodel
+    from employee.models import Employee
+
+    employees = Employee.objects.filter(is_active=True)
+    return filtersubordinatesemployeemodel(
+        request, employees, perm="attendance.view_attendance"
+    )
+
+
 def _latest_attendance_date(reference_date=None):
     """Return the latest attendance_date that actually has records.
 
@@ -153,9 +165,8 @@ def attendance_kpi_data(request):
     """
     from attendance.filters import get_expected_to_check_in
     from attendance.models import Attendance, AttendanceLateComeEarlyOut
-    from employee.models import Employee
 
-    employees = Employee.objects.filter(is_active=True)
+    employees = _scoped_employees(request)
     total_employees = employees.count()
 
     # Deliberately NOT routed through _latest_attendance_date(): that
@@ -172,6 +183,7 @@ def attendance_kpi_data(request):
         Attendance.objects.filter(
             attendance_date=today,
             employee_id__is_active=True,
+            employee_id__in=employees,
         )
         .values("employee_id")
         .distinct()
@@ -191,6 +203,7 @@ def attendance_kpi_data(request):
             type="late_come",
             attendance_id__attendance_date=today,
             employee_id__is_active=True,
+            employee_id__in=employees,
         )
         .values("employee_id")
         .distinct()
@@ -202,6 +215,7 @@ def attendance_kpi_data(request):
             type="early_out",
             attendance_id__attendance_date=today,
             employee_id__is_active=True,
+            employee_id__in=employees,
         )
         .values("employee_id")
         .distinct()
@@ -231,6 +245,7 @@ def attendance_kpi_data(request):
             attendance_validated=True,
             overtime_second__gt=0,
             employee_id__is_active=True,
+            employee_id__in=employees,
         ).count()
     except Exception:
         pass
@@ -240,7 +255,9 @@ def attendance_kpi_data(request):
     # ?employee_id=<id> params (EmployeeFilter.employee_id, a
     # ModelMultipleChoiceFilter on id) instead of a dedicated page.
     missing_punches_ids = list(
-        _missing_punches_employees(today).values_list("id", flat=True)
+        _missing_punches_employees(today, employee_ids=employees).values_list(
+            "id", flat=True
+        )
     )
 
     return JsonResponse(
@@ -274,6 +291,7 @@ def attendance_weekly_trend(request):
     from_date, to_date = _current_month_bounds()
     today = date.today()
     span = (to_date - from_date).days
+    employees = _scoped_employees(request)
 
     counts = {
         row["attendance_date"]: row["c"]
@@ -282,6 +300,7 @@ def attendance_weekly_trend(request):
                 attendance_date__gte=from_date,
                 attendance_date__lte=to_date,
                 employee_id__is_active=True,
+                employee_id__in=employees,
             )
             # Attendance's default ordering (-attendance_date, employee name,
             # clock_in) otherwise leaks into the GROUP BY below, splintering
@@ -361,17 +380,18 @@ def attendance_weekly_trend(request):
 def attendance_department_breakdown(request):
     """Attendance broken down by department for the selected date (to_date)."""
     from attendance.models import Attendance
-    from employee.models import Employee
 
     _, to_date = _parse_period(request)
     today = _latest_attendance_date(to_date)
     departments = []
+    employees = _scoped_employees(request)
 
     try:
         dept_data = (
             Attendance.objects.filter(
                 attendance_date=today,
                 employee_id__is_active=True,
+                employee_id__in=employees,
             )
             # Clear Attendance's default ordering before grouping -- see
             # attendance_weekly_trend for why it otherwise pollutes GROUP BY.
@@ -384,8 +404,7 @@ def attendance_department_breakdown(request):
         for item in dept_data:
             dept = item["employee_id__employee_work_info__department_id__department"]
             if dept:
-                total_in_dept = Employee.objects.filter(
-                    is_active=True,
+                total_in_dept = employees.filter(
                     employee_work_info__department_id__department=dept,
                 ).count()
                 departments.append(
@@ -414,6 +433,7 @@ def attendance_late_early_data(request):
     month_start, month_end = _current_month_bounds()
     late_data = []
     early_data = []
+    employees = _scoped_employees(request)
 
     try:
         # Plain row count, not distinct-employee: AttendanceLateComeEarlyOut
@@ -427,6 +447,7 @@ def attendance_late_early_data(request):
                 type="late_come",
                 attendance_id__attendance_date__gte=month_start,
                 attendance_id__attendance_date__lte=month_end,
+                employee_id__in=employees,
             )
             .order_by()
             .values("employee_id__employee_work_info__department_id__department")
@@ -443,6 +464,7 @@ def attendance_late_early_data(request):
                 type="early_out",
                 attendance_id__attendance_date__gte=month_start,
                 attendance_id__attendance_date__lte=month_end,
+                employee_id__in=employees,
             )
             .order_by()
             .values("employee_id__employee_work_info__department_id__department")
@@ -477,6 +499,7 @@ def attendance_overtime_summary(request):
     today = to_date
     first_of_month = from_date
     departments = []
+    employees = _scoped_employees(request)
 
     try:
         data = (
@@ -485,6 +508,7 @@ def attendance_overtime_summary(request):
                 attendance_date__lte=today,
                 attendance_validated=True,
                 overtime_second__gt=0,
+                employee_id__in=employees,
             )
             .order_by()
             .values("employee_id__employee_work_info__department_id__department")
@@ -529,6 +553,7 @@ def attendance_hours_distribution(request):
 
     month_start, month_end = _current_month_bounds()
     departments = []
+    employees = _scoped_employees(request)
 
     try:
         # Worked hours: Attendance has an attendance_date, so bound directly
@@ -541,6 +566,7 @@ def attendance_hours_distribution(request):
             for row in (
                 Attendance.objects.filter(
                     employee_id__is_active=True,
+                    employee_id__in=employees,
                     attendance_date__gte=month_start,
                     attendance_date__lte=month_end,
                 )
@@ -563,6 +589,7 @@ def attendance_hours_distribution(request):
             for row in (
                 AttendanceOverTime.objects.filter(
                     employee_id__is_active=True,
+                    employee_id__in=employees,
                     month=month_start.strftime("%B").lower(),
                     year=str(month_start.year),
                 )
@@ -602,13 +629,11 @@ def attendance_hours_distribution(request):
 @login_required
 def attendance_shift_distribution(request):
     """Employee distribution by shift type."""
-    from employee.models import Employee
-
     shifts = []
 
     try:
         data = (
-            Employee.objects.filter(is_active=True)
+            _scoped_employees(request)
             .exclude(employee_work_info__shift_id__isnull=True)
             .values(
                 "employee_work_info__shift_id",
@@ -642,7 +667,6 @@ def attendance_absenteeism_trend(request):
     """
     from attendance.models import Attendance
     from base.models import Holidays
-    from employee.models import Employee
     from leave.methods import holiday_dates_list
     from leave.models import LeaveRequest
 
@@ -662,10 +686,9 @@ def attendance_absenteeism_trend(request):
             year -= 1
         window_start = date(year, month, 1)
 
+        scoped_employees = _scoped_employees(request)
         employees = list(
-            Employee.objects.filter(is_active=True).values(
-                "id", "employee_work_info__date_joining"
-            )
+            scoped_employees.values("id", "employee_work_info__date_joining")
         )
 
         holiday_dates = set(
@@ -733,6 +756,7 @@ def attendance_absenteeism_trend(request):
                     attendance_date__gte=month_start,
                     attendance_date__lte=month_end,
                     employee_id__is_active=True,
+                    employee_id__in=scoped_employees,
                 )
                 .values("employee_id", "attendance_date")
                 .distinct()
@@ -761,14 +785,12 @@ def attendance_absenteeism_trend(request):
 @login_required
 def attendance_work_type_distribution(request):
     """Employee distribution by work type (remote, on-site, hybrid, etc.)."""
-    from employee.models import Employee
-
     work_types = []
+    employees = _scoped_employees(request)
 
     try:
         data = (
-            Employee.objects.filter(is_active=True)
-            .exclude(employee_work_info__work_type_id__isnull=True)
+            employees.exclude(employee_work_info__work_type_id__isnull=True)
             .values(
                 "employee_work_info__work_type_id",
                 "employee_work_info__work_type_id__work_type",
@@ -786,8 +808,7 @@ def attendance_work_type_distribution(request):
                 )
 
         # Count employees with no work type assigned
-        no_wt = Employee.objects.filter(
-            is_active=True,
+        no_wt = employees.filter(
             employee_work_info__work_type_id__isnull=True,
         ).count()
         if no_wt > 0:
@@ -809,6 +830,7 @@ def attendance_avg_working_hours(request):
     today = to_date
     first_of_month = from_date
     departments = []
+    employees = _scoped_employees(request)
 
     try:
         data = (
@@ -816,6 +838,7 @@ def attendance_avg_working_hours(request):
                 attendance_date__gte=first_of_month,
                 attendance_date__lte=today,
                 at_work_second__gt=0,
+                employee_id__in=employees,
             )
             .order_by()
             .values("employee_id__employee_work_info__department_id__department")
@@ -862,7 +885,6 @@ def attendance_avg_working_hours(request):
 def attendance_top_absentees(request):
     """Top 10 employees with most absences in the current month."""
     from attendance.models import Attendance
-    from employee.models import Employee
 
     from_date, to_date = _parse_period(request)
     today = to_date
@@ -881,7 +903,7 @@ def attendance_top_absentees(request):
         if working_days == 0:
             return JsonResponse({"absentees": []})
 
-        employees = Employee.objects.filter(is_active=True)
+        employees = _scoped_employees(request)
 
         for emp in employees:
             present_days = (
@@ -931,7 +953,9 @@ def attendance_clockin_distribution(request):
     buckets = {}
     try:
         qs = Attendance.objects.filter(
-            attendance_date=target_date, attendance_clock_in__isnull=False
+            attendance_date=target_date,
+            attendance_clock_in__isnull=False,
+            employee_id__in=_scoped_employees(request),
         )
         for att in qs:
             hour = att.attendance_clock_in.hour
@@ -964,9 +988,8 @@ def attendance_calendar_heatmap(request):
     days = []
     aggregate = "daily"
     try:
-        from employee.models import Employee
-
-        total = Employee.objects.filter(is_active=True).count()
+        employees = _scoped_employees(request)
+        total = employees.count()
         counts = {
             row["attendance_date"]: row["c"]
             for row in (
@@ -974,6 +997,7 @@ def attendance_calendar_heatmap(request):
                     attendance_date__gte=from_date,
                     attendance_date__lte=to_date,
                     employee_id__is_active=True,
+                    employee_id__in=employees,
                 )
                 .order_by()
                 .values("attendance_date")
@@ -1074,6 +1098,7 @@ def attendance_overview(request):
 
     try:
         dept_field = "employee_id__employee_work_info__department_id__department"
+        employees = _scoped_employees(request)
 
         present_by_dept = {
             row[dept_field]: row["c"]
@@ -1082,6 +1107,7 @@ def attendance_overview(request):
                     attendance_date__gte=month_start,
                     attendance_date__lte=month_end,
                     employee_id__is_active=True,
+                    employee_id__in=employees,
                 )
                 .order_by()
                 .values(dept_field)
@@ -1096,6 +1122,7 @@ def attendance_overview(request):
                     attendance_id__attendance_date__gte=month_start,
                     attendance_id__attendance_date__lte=month_end,
                     employee_id__is_active=True,
+                    employee_id__in=employees,
                 )
                 .order_by()
                 .values(dept_field)
@@ -1110,6 +1137,7 @@ def attendance_overview(request):
                     attendance_id__attendance_date__gte=month_start,
                     attendance_id__attendance_date__lte=month_end,
                     employee_id__is_active=True,
+                    employee_id__in=employees,
                 )
                 .order_by()
                 .values(dept_field)

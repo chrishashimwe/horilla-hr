@@ -134,7 +134,7 @@ class AttendanceActivity(HorillaModel):
 
     def diff_cell(self):
         if self.clock_out == None:
-            return 'style="background-color: #FFE4B3"'
+            return 'style="background-color: rgba(255, 166, 0, 0.158);"'
 
     def detail_view_delete_attendance(self):
         """
@@ -326,7 +326,7 @@ class Attendance(HorillaModel):
 
     def diff_cell(self):
         if self.request_type == "created_request":
-            return 'style="background-color: #FFE4B3"'
+            return 'style="background-color: rgba(255, 166, 0, 0.158);"'
 
     # Per-column CSS classes for the "Requested Attendances" list. Consumed by
     # HorillaListView.cell_class_method, which looks the rendered column's

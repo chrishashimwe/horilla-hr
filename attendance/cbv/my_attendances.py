@@ -180,7 +180,7 @@ class MyAttendanceList(MyAttendancesListView):
 
         self.row_status_indications = (self.row_status_indications or []) + [
             (
-                "filter--dot",
+                "",
                 _("Yesterday"),
                 f"""
                     onclick="
@@ -192,7 +192,7 @@ class MyAttendanceList(MyAttendancesListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Today"),
                 f"""
                     onclick="
@@ -204,7 +204,7 @@ class MyAttendanceList(MyAttendancesListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Tomorrow"),
                 f"""
                     onclick="
@@ -216,7 +216,7 @@ class MyAttendanceList(MyAttendancesListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("This Week"),
                 f"""
                     onclick="

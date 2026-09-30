@@ -213,6 +213,11 @@ class LeaveRequestsListView(HorillaListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # Subclasses (e.g. LeaveClashListView) set this to None to hide the
+        # status legend/date presets entirely.
+        if self.row_status_indications is None:
+            return context
+
         today = date.today()
         yesterday = today - timedelta(days=1)
         tomorrow = today + timedelta(days=1)
@@ -224,7 +229,7 @@ class LeaveRequestsListView(HorillaListView):
         # both ends to the same date.
         self.row_status_indications = self.row_status_indications + [
             (
-                "filter--dot",
+                "",
                 _("Yesterday"),
                 f"""
                     onclick="
@@ -235,7 +240,7 @@ class LeaveRequestsListView(HorillaListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Today"),
                 f"""
                     onclick="
@@ -246,7 +251,7 @@ class LeaveRequestsListView(HorillaListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Tomorrow"),
                 f"""
                     onclick="
@@ -257,7 +262,7 @@ class LeaveRequestsListView(HorillaListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("This Week"),
                 f"""
                     onclick="

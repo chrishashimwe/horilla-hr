@@ -221,7 +221,17 @@ def asset_request_status(request):
         },
     ]
 
-    return JsonResponse({"statuses": statuses})
+    return JsonResponse(
+        {
+            "statuses": statuses,
+            # Echoed back so the chart's click-through can filter to the
+            # exact same asset_request_date range these counts were
+            # computed from, instead of showing every request with that
+            # status regardless of month.
+            "period_from_date": from_date.isoformat(),
+            "period_to_date": to_date.isoformat(),
+        }
+    )
 
 
 @login_required

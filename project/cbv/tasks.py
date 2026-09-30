@@ -193,7 +193,7 @@ class TaskListView(HorillaListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Yesterday"),
                 f"""
                     onclick="
@@ -205,7 +205,7 @@ class TaskListView(HorillaListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Today"),
                 f"""
                     onclick="
@@ -217,7 +217,7 @@ class TaskListView(HorillaListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Tomorrow"),
                 f"""
                     onclick="
@@ -229,7 +229,7 @@ class TaskListView(HorillaListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("This Week"),
                 f"""
                     onclick="
@@ -626,7 +626,7 @@ class TaskCardView(HorillaKanbanView):
 
         self.card_status_indications = [
             (
-                "filter--dot",
+                "",
                 _("Yesterday"),
                 f"""
                     onclick="
@@ -638,7 +638,7 @@ class TaskCardView(HorillaKanbanView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Today"),
                 f"""
                     onclick="
@@ -650,7 +650,7 @@ class TaskCardView(HorillaKanbanView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Tomorrow"),
                 f"""
                     onclick="
@@ -662,7 +662,7 @@ class TaskCardView(HorillaKanbanView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("This Week"),
                 f"""
                     onclick="

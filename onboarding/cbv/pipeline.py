@@ -763,8 +763,12 @@ class CandidateList(HorillaListView):
         # request-local and never leaks between requests.
         dynamic_columns = []
         dynamic_toggle_labels = {}
+        dynamic_header_attrs = {}
         for task in tasks:
-            dynamic_toggle_labels[f"get_{task.pk}_task"] = task.task_title
+            col_key = f"get_{task.pk}_task"
+            dynamic_toggle_labels[col_key] = task.task_title
+            col_width = max(150, len(task.task_title) * 7 + 130)
+            dynamic_header_attrs[col_key] = f'style="width:{col_width}px !important;"'
             dynamic_columns.append(
                 (
                     f"""
@@ -772,7 +776,7 @@ class CandidateList(HorillaListView):
                             <span class="px-2 py-1 text-xs">
                                 {task.task_title}
                             </span>
-                            <div class="hidden group-hover:flex items-center transition duration-300 gap-1 p-1 rounded z-10 bg-white"
+                            <div class="flex items-center transition duration-300 gap-1 p-1 rounded z-10 bg-white"
                                 onclick="event.stopPropagation()"
                             >
                                 <button
@@ -798,7 +802,7 @@ class CandidateList(HorillaListView):
                             </div>
                         </div>
                     """,
-                    f"get_{task.pk}_task",
+                    col_key,
                 )
             )
         dynamic_columns.append(
@@ -831,6 +835,7 @@ class CandidateList(HorillaListView):
         self.columns = self.columns + dynamic_columns
         self.default_columns = self.default_columns + dynamic_columns
         self.toggle_labels = {**self.toggle_labels, **dynamic_toggle_labels}
+        self.header_attrs = {**self.header_attrs, **dynamic_header_attrs}
 
         context = super().get_context_data(**kwargs)
         context["stage"] = onboarding_models.OnboardingStage.objects.filter(

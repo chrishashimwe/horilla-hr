@@ -1102,7 +1102,11 @@ class OffboardingEmployeeList(HorillaListView):
             if stage_id
             else OffboardingTask.objects.none()
         )
+        header_attrs = dict(context.get("header_attrs") or {})
         for task in tasks:
+            col_key = f"get_{task.pk}_task"
+            col_width = max(150, len(task.title) * 7 + 130)
+            header_attrs[col_key] = f'style="width:{col_width}px !important;"'
             context["columns"].append(
                 (
                     f"""
@@ -1110,7 +1114,7 @@ class OffboardingEmployeeList(HorillaListView):
                           <span class="px-2 py-1 text-xs">
                             {task.title}
                           </span>
-                          <div class="hidden group-hover:flex items-center transition duration-300 gap-1 p-1 rounded z-10 bg-white"
+                          <div class="flex items-center transition duration-300 gap-1 p-1 rounded z-10 bg-white"
                                onclick="event.stopPropagation()">
                             <button
                               hx-get="{reverse("offboarding-update-task",kwargs={"pk":task.pk})}"
@@ -1135,9 +1139,10 @@ class OffboardingEmployeeList(HorillaListView):
                           </div>
                         </div>
                     """,
-                    f"get_{task.pk}_task",
+                    col_key,
                 )
             )
+        context["header_attrs"] = header_attrs
         if self.request.user.has_perm(
             "perms.offboarding.add_offboardingtask"
         ) or any_manager(self.request.user.employee_get):

@@ -149,7 +149,7 @@ class AttendancesListView(HorillaListView):
 
         self.row_status_indications = (self.row_status_indications or []) + [
             (
-                "filter--dot",
+                "",
                 _("Yesterday"),
                 f"""
                     onclick="
@@ -161,7 +161,7 @@ class AttendancesListView(HorillaListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Today"),
                 f"""
                     onclick="
@@ -173,7 +173,7 @@ class AttendancesListView(HorillaListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("Tomorrow"),
                 f"""
                     onclick="
@@ -185,7 +185,7 @@ class AttendancesListView(HorillaListView):
                 """,
             ),
             (
-                "filter--dot",
+                "",
                 _("This Week"),
                 f"""
                     onclick="

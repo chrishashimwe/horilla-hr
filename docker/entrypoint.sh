@@ -3,7 +3,14 @@ set -e
 
 echo "Starting Horilla HR..."
 
-DB_HOST="${DB_HOST:-db}"
+if [ -n "${DB_HOST:-}" ]; then
+  DB_HOST="$DB_HOST"
+elif [ -n "${DATABASE_URL:-}" ]; then
+  DB_HOST="$(python -c 'import os, urllib.parse; print(urllib.parse.urlparse(os.environ["DATABASE_URL"]).hostname or "")')"
+else
+  DB_HOST="db"
+fi
+
 DB_PORT="${DB_PORT:-5432}"
 
 # Wait for PostgreSQL to be ready (with timeout)
